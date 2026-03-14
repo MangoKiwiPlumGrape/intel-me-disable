@@ -31,8 +31,7 @@ This is a **soft/OS-level disable** — it does not touch firmware or flash. The
 
 For a firmware-level disable (stronger, requires chip programmer or internal flash access), see the companion tools:
 - [me_cleaner_thinkpad](https://github.com/MangoKiwiPlumGrape/me_cleaner_thinkpad) — HAP bit via external programmer
-- [ifdtool_thinkpad](https://github.com/MangoKiwiPlumGrape/ifdtool_thinkpad) — HAP bit via internal flash
-
+- [ifdtool_thinkpad](https://github.com/MangoKiwiPlumGrape/ifdtool_thinkpad) — Check dumps before and after specify with platform command.
 ---
 
 ## Compatibility
