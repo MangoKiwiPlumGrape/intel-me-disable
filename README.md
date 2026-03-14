@@ -1,6 +1,19 @@
-# Intel ME/CSME/GSC Disabler — 
+<div align="center">
 
-> Soft-disables the Intel Management Engine at the OS level on Debian/Ubuntu systems. After running, the ME will no longer appear in `lspci` and its kernel modules will be permanently blocked.
+# intel-me-disable.sh
+### OS-level Intel ME/CSME/GSC soft-disable for Debian/Ubuntu
+
+[![Platforms](https://img.shields.io/badge/platforms-Sandy%20Bridge%20→%20Panther%20Lake-blue?style=flat-square&logo=intel)](https://github.com/MangoKiwiPlumGrape/intel-me-disable)
+[![Device IDs](https://img.shields.io/badge/device%20IDs-61%20HECI%20IDs-brightgreen?style=flat-square)](https://github.com/MangoKiwiPlumGrape/intel-me-disable)
+[![Years](https://img.shields.io/badge/coverage-2011–2026-informational?style=flat-square)](https://github.com/MangoKiwiPlumGrape/intel-me-disable)
+[![OS](https://img.shields.io/badge/OS-Debian%20%2F%20Ubuntu-orange?style=flat-square&logo=ubuntu)](https://github.com/MangoKiwiPlumGrape/intel-me-disable)
+[![License](https://img.shields.io/badge/license-MIT-lightgrey?style=flat-square)](LICENSE)
+[![Hardware Tested](https://img.shields.io/badge/hardware-tested%20on%20ThinkPad-success?style=flat-square)](https://github.com/MangoKiwiPlumGrape/intel-me-disable)
+
+> Soft-disables the Intel Management Engine at the OS level on Debian/Ubuntu systems.  
+> After running, ME will no longer appear in `lspci` and its kernel modules are permanently blocked.
+
+</div>
 
 ---
 
@@ -16,28 +29,59 @@ Intel's Management Engine (ME/CSME/GSC) is a coprocessor embedded in Intel chips
 
 This is a **soft/OS-level disable** — it does not touch firmware or flash. The ME hardware still exists but cannot communicate with your OS and will not appear in `lspci`.
 
+For a firmware-level disable (stronger, requires chip programmer or internal flash access), see the companion tools:
+- [me_cleaner_thinkpad](https://github.com/MangoKiwiPlumGrape/me_cleaner_thinkpad) — HAP bit via external programmer
+- [ifdtool_thinkpad](https://github.com/MangoKiwiPlumGrape/ifdtool_thinkpad) — HAP bit via internal flash
+
 ---
 
 ## Compatibility
 
-Designed for **Intel platforms from 2011 to 2026**, covering the following generations:
+**61 HECI device IDs** covering Sandy Bridge (2011) through Panther Lake (2026), sourced from Intel PCH datasheets, Linux kernel `drivers/misc/mei/hw-me-regs.h`, and coreboot `pci_ids.h`.
 
-| Generation | Example CPUs | ME Device IDs |
-|---|---|---|
-| Sandy Bridge (2011) | 2nd Gen Core | `0x1c3a` |
-| Ivy Bridge (2012) | 3rd Gen Core | `0x1e3a` |
-| Haswell (2013–2014) | 4th Gen Core | `0x8c3a`, `0x9c3a`, `0x9cba` |
-| Skylake / Kaby Lake | 6th–8th Gen Core | `0x9d3a`, `0xa13a` |
-| Whiskey / Comet Lake | 8th–10th Gen Core | `0x9de0`, `0xa360`, `0xa0e0` |
-| Tiger Lake | 11th Gen Core | `0x43a8`, `0x4b28` |
-| Alder Lake | 12th Gen Core | `0x464e`, `0x467e` |
-| Raptor Lake | 13th–14th Gen Core | `0x51a8`, `0x51e8`, `0x7e28` |
-| Meteor Lake | Core Ultra 100 | `0x7d3a`, `0x7d60`, `0x7e40` |
-| Arrow Lake | Core Ultra 200 | `0xa84a`, `0xa84e`, `0xa860` |
+| Generation | CPUs | ME Version | Key IDs |
+|---|---|---|---|
+| Sandy Bridge (2011) | 2nd Gen Core | ME 7 | `0x1c3a` |
+| Ivy Bridge (2012) | 3rd Gen Core | ME 8 | `0x1e3a` |
+| Haswell (2013) | 4th Gen Core | ME 9 | `0x8c3a`, `0x9c3a` |
+| Broadwell (2014) | 5th Gen Core | ME 10 | `0x9cba` |
+| Skylake / Kaby Lake | 6th–7th Gen Core | ME 11 | `0x9d3a`, `0xa13a`–`0xa13e` |
+| Kaby Lake-H (Union Point) | 7th Gen H | ME 11 | `0xa2ba`–`0xa2be` |
+| Cannon Point LP | 8th/9th Gen U | ME 12 | `0x9de0`, `0x9de8` |
+| Cannon Point H | 8th/9th Gen H | ME 12 | `0xa360` |
+| Ice Lake LP | 10th Gen U | ME 13 | `0x34e0`, `0x34e8` |
+| Comet Lake U/H/S | 10th Gen | ME 14 | `0x02e0`–`0x02e8`, `0x06e0`–`0x06e8`, `0xa3b0`, `0xa3ba` |
+| Tiger Lake LP/H | 11th Gen | ME 15 | `0xa0e0`, `0xa0e8`, `0x43e0`, `0x43e8` |
+| Elkhart Lake | Atom x6000 | ME 15 | `0x4b28` |
+| Alder Lake S/P/N | 12th Gen | ME 16 | `0x7ae8`, `0x7ae9`, `0x51e0`–`0x51a8`, `0x54e0`, `0x54e8` |
+| Raptor Lake S | 13th Gen | ME 16.1 | `0x7a68`, `0x7a69` |
+| Meteor Lake P | 14th Gen Core Ultra | ME 18 | `0x7e70`, `0x7e71`, `0x7e74`, `0x7e28` |
+| Arrow Lake H/U | 15th Gen Core Ultra 200 | — | `0x7770`–`0x7775`, `0x7758`–`0x775a` |
+| Arrow Lake S | 15th Gen Core Ultra 200S | — | `0xae70`, `0xae71` |
+| Lunar Lake | 16th Gen Core Ultra | — | `0xa870`, `0xa84a`, `0xa84e`, `0xa860` |
+| Panther Lake U | Series 3 | — | `0xe362`–`0xe364` |
+| Panther Lake H | Series 3 | — | `0xe462`–`0xe464` |
 
 Also catches any unknown/future ME variants via PCI class matching (`0x0c8080`, `0x078000`).
 
 **OS:** Debian, Ubuntu, and derivatives. Tested on ThinkPads but works on any Intel system.
+
+---
+
+## ID Accuracy
+
+Device IDs were cross-referenced against Intel PCH datasheets and corrected where upstream tools had errors:
+
+| Platform | Removed / Corrected | Reason |
+|---|---|---|
+| ADL-S | `0x7aea` removed | IDE-R function, not HECI — wrong in many tools |
+| RPL-S | `0x7a60` removed | Wrong SKU variant |
+| MTL | `0x7e40` removed | CNVi WiFi controller, not MEI |
+| MTL | `0x7d3a`, `0x7d60` removed | eSPI/LPC controller, not MEI |
+| ADL-S | `0x7ae8`, `0x7ae9` added | Correct HECI1/2 — Doc 648364 |
+| RPL-S | `0x7a68`, `0x7a69` added | Correct HECI1/2 — Doc 743835 |
+| ARL H/U | `0x7771`, `0x7774`, `0x7775`, `0x7758`–`0x775a` added | Doc 842704 |
+| PTL | `0xe362`–`0xe364`, `0xe462`–`0xe464` added | Doc 872188 |
 
 ---
 
@@ -52,12 +96,11 @@ Also catches any unknown/future ME variants via PCI class matching (`0x0c8080`, 
 ## Usage
 
 ```bash
-# Clone or download the script
-chmod +x intel-me-disable.SH
-sudo ./intel-me-disable.SH
+chmod +x intel-me-disable.sh
+sudo ./intel-me-disable.sh
 ```
 
-Then reboot when prompted (or manually):
+Then reboot:
 
 ```bash
 sudo reboot
@@ -80,7 +123,15 @@ lspci | grep -i "mei\|management engine\|heci"
 | `/etc/udev/rules.d/99-disable-intel-me.rules` | Removes ME PCI device on every boot |
 | `/etc/systemd/system/disable-intel-me.service` | Early-boot service to enforce both of the above |
 
-All pre-existing versions of these files are backed up to `/root/me_disable_backup_<timestamp>/` before modification.
+All pre-existing files are backed up to `/root/me_disable_backup_<timestamp>/` before modification.
+
+---
+
+## Modules Blacklisted
+
+`mei`, `mei_me`, `mei_gsc`, `mei_vsc`, `intel_vsec`, `intel_csme`, `intel_pmt`, `pmt_telemetry`, `iTCO_wdt`
+
+Plus any additional ME-related modules dynamically discovered on your system at run time. Each module gets three layers of blocking: `blacklist`, `install $mod /bin/false`, and `softdep pre: blacklist`.
 
 ---
 
@@ -88,26 +139,21 @@ All pre-existing versions of these files are backed up to `/root/me_disable_back
 
 **[1/7] Detection** — Scans `lspci` for any visible ME interface. Non-fatal if already gone.
 
-**[2/7] Module discovery** — Finds all loaded and available ME-related `.ko` modules on your system, including `mei*`, `intel_vsec`, `intel_csme`, `intel_pmt`, `pmt_*`, `iTCO_*`, and more.
+**[2/7] Module discovery** — Finds all loaded and available ME-related `.ko` modules, including `mei*`, `intel_vsec`, `intel_csme`, `intel_pmt`, `pmt_*`, `iTCO_*`, and more.
 
-**[3/7] Dependency resolution** — Checks `modinfo` to pull in any modules that the ME stack depends on, so nothing can sneak back in via a dependency load.
+**[3/7] Dependency resolution** — Checks `modinfo` to pull in any modules the ME stack depends on, so nothing can sneak back via a dependency load.
 
-**[4/7] Blacklist** — Writes `/etc/modprobe.d/disable-intel-me.conf` with:
-- `blacklist` directives for all known ME modules
-- `install $mod /bin/false` to hard-block any load attempt
-- `softdep $mod pre: blacklist` to prevent loading as a dependency
+**[4/7] Blacklist** — Writes `/etc/modprobe.d/disable-intel-me.conf` with three layers of blocking per module.
 
-**[5/7] Udev rule** — Matches ME devices by both specific device ID and PCI class. When the kernel adds the device at boot, udev immediately writes `1` to its `remove` sysfs node, evicting it from the device tree before any driver can bind.
+**[5/7] Udev rule** — Matches ME devices by both specific device ID (61 IDs) and PCI class. When the kernel adds the device at boot, udev immediately removes it before any driver can bind.
 
-**[6/7] Systemd service** — Runs at early boot (before `sysinit.target`) to reload udev rules and trigger PCI re-enumeration, then unloads any lingering ME modules.
+**[6/7] Systemd service** — Runs at early boot (before `sysinit.target`) to reload udev rules, trigger PCI re-enumeration, and unload any lingering ME modules.
 
 **[7/7] Apply now** — Unloads currently-loaded ME modules, triggers udev, and rebuilds initramfs so the blacklist is baked into the next boot image.
 
 ---
 
 ## Reverting
-
-To undo everything:
 
 ```bash
 sudo rm /etc/modprobe.d/disable-intel-me.conf
@@ -122,15 +168,26 @@ Your original files (if any existed) are in `/root/me_disable_backup_<timestamp>
 
 ---
 
-## Caveats & Warnings
+## Caveats
 
-- This is an **OS-level soft disable only**. 
-- Some features that depend on ME (Intel AMT, certain DRM workflows, some thermal management paths on laptops) will stop functioning.
+- **OS-level soft disable only.** ME hardware still exists on the chip.
+- Intel AMT, certain DRM workflows, and some thermal management paths will stop functioning.
 - On a small number of systems, removing the ME PCI device can cause boot delays or benign kernel warnings. These are cosmetic.
-- Run at your own risk. A backup of all modified files is always created before changes are applied.
+- Always run with a known-good system state. A full backup of all modified files is created before any changes.
 
 ---
 
+## Part of the Intel ME Disable Toolkit
+
+This script is the OS-level component of a three-tool set:
+
+| Tool | Method | Strength |
+|---|---|---|
+| **intel-me-disable.sh** (this) | OS-level udev + module blacklist | Soft — ME halted by OS, not firmware |
+| [me_cleaner_thinkpad](https://github.com/MangoKiwiPlumGrape/me_cleaner_thinkpad) | HAP bit via external programmer | Strong — ME halted in firmware before OS boots |
+| [ifdtool_thinkpad](https://github.com/MangoKiwiPlumGrape/ifdtool_thinkpad) | HAP bit via internal flash | Strong — same as above, no chip clip needed |
+
+See [ME_Disable_Comparison.md](https://github.com/MangoKiwiPlumGrape/me_cleaner_thinkpad/blob/main/ME_Disable_Comparison.md) for a detailed breakdown of what each method actually prevents.
 
 ---
 
