@@ -2,7 +2,7 @@
 # Intel Management Engine (ME/CSME/GSC) Disabler – (2026)
 # Device IDs updated from intelmetool-thinkpad fork cross-reference:
 #   Intel PCH datasheets (Doc 648364, 743835, 792044) + coreboot pci_ids.h
-#   50 HECI device IDs covering Sandy Bridge (2011) through Lunar Lake (2025)
+#   61 HECI device IDs covering Sandy Bridge (2011) through Panther Lake (2026)
 #   Removed non-MEI eSPI IDs (0x464e, 0x467e, 0x7d3a, 0x7d60)
 #   Corrected ADL-S: 0x7aea→0x7ae8, RPL-S: 0x7a60→0x7a68
 
@@ -124,19 +124,23 @@ UDEV_RULE_FILE="/etc/udev/rules.d/99-disable-intel-me.rules"
 [ -f "$UDEV_RULE_FILE" ] && cp "$UDEV_RULE_FILE" "$BACKUP_DIR/"
 
 cat > "$UDEV_RULE_FILE" << 'EOF'
-# Intel ME/CSME/GSC — permanently gone — Sandy Bridge through Lunar Lake (2011–2025)
+# Intel ME/CSME/GSC — permanently gone — Sandy Bridge through Panther Lake (2011–2026)
 # Device IDs sourced from: Intel PCH datasheets (Doc 648364, 743835, 792044),
-# coreboot pci_ids.h, Linux kernel drivers/misc/mei/hw-me-regs.h
+# coreboot pci_ids.h, Linux kernel drivers/misc/mei/hw-me-regs.h,
+# Intel DS Doc 842704 (ARL), Doc 872188 (PTL)
 # Last updated: 2026 — intelmetool-thinkpad fork cross-reference
 #
 # Removed: 0x464e, 0x467e (ADL-S eSPI/LPC — NOT MEI devices)
 #          0x7d3a, 0x7d60 (MTL eSPI/LPC — NOT MEI devices)
 # Corrected: ADL-S was 0x7aea (IDE-R) → now 0x7ae8/0x7ae9 (HECI1/2)
 #            RPL-S was 0x7a60 → now 0x7a68/0x7a69 (datasheet+coreboot confirmed)
-# Added: CML/ICL/TGL HECI2/3, ADL-N, RPL-S HECI2, MTL HECI2/3, ARL, LNL
+# Added: CML/ICL/TGL HECI2/3, ADL-N, RPL-S HECI2, MTL HECI2/3,
+#        ARL-H/U HECI2/3/4 + tile block (Doc 842704),
+#        PTL-404 + PTL-H484 HECI1/2/3 (Doc 872188), LNL (coreboot)
+# Removed: 0x7e40 (MTL CNVi WiFi — NOT a MEI device)
 #
 ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x8086", \
-ATTR{device}=="0x1c3a|0x1e3a|0x8c3a|0x9c3a|0x9cba|0x9d3a|0xa13a|0xa13b|0xa13e|0xa2ba|0xa2bb|0xa2be|0x9de0|0x9de8|0xa360|0x02e0|0x02e8|0x06e0|0x06e8|0xa3b0|0xa3ba|0x34e0|0x34e8|0xa0e0|0xa0e8|0x43e0|0x43e8|0x43a8|0x4b28|0x51e0|0x51e8|0x51a8|0x54e0|0x54e8|0x7ae8|0x7ae9|0x7a68|0x7a69|0x7e70|0x7e71|0x7e74|0x7e28|0x7e40|0x7770|0xae70|0xae71|0xa870|0xa84a|0xa84e|0xa860", \
+ATTR{device}=="0x1c3a|0x1e3a|0x8c3a|0x9c3a|0x9cba|0x9d3a|0xa13a|0xa13b|0xa13e|0xa2ba|0xa2bb|0xa2be|0x9de0|0x9de8|0xa360|0x02e0|0x02e8|0x06e0|0x06e8|0xa3b0|0xa3ba|0x34e0|0x34e8|0xa0e0|0xa0e8|0x43e0|0x43e8|0x43a8|0x4b28|0x51e0|0x51e8|0x51a8|0x54e0|0x54e8|0x7ae8|0x7ae9|0x7a68|0x7a69|0x7e70|0x7e71|0x7e74|0x7e28|0x7770|0x7771|0x7774|0x7775|0x7758|0x7759|0x775a|0xae70|0xae71|0xa870|0xa84a|0xa84e|0xa860|0xe362|0xe363|0xe364|0xe462|0xe463|0xe464", \
 RUN+="/bin/sh -c 'echo 1 > /sys/bus/pci/devices/%k/remove || echo 1 > /sys/bus/pci/devices/%k/reset'"
 
 ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x8086", ATTR{class}=="0x0c8080", \
@@ -193,7 +197,7 @@ update-initramfs -u -k all || true
 echo -e "\n${GREEN}=== All done — ME is now truly dead on every modern ThinkPad ===${NC}"
 echo -e "${YELLOW}Summary:${NC}"
 echo "   • Modules blocked : ${#SORTED_MODULES[@]}"
-echo "   • Udev rule       : 50 device IDs (Sandy Bridge→Lunar Lake) + PCI class"
+echo "   • Udev rule       : 61 device IDs (Sandy Bridge→Lunar Lake) + PCI class"
 echo "   • Backup          : $BACKUP_DIR"
 echo -e "\n${YELLOW}Reboot now for permanent effect.${NC}"
 
