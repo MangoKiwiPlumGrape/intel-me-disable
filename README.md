@@ -3,6 +3,8 @@
 # intel-me-disable.sh
 ### OS-level Intel ME/CSME/GSC soft-disable for Debian/Ubuntu
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/MangoKiwiPlumGrape/intel-me-disable)
+
 [![Platforms](https://img.shields.io/badge/platforms-Sandy%20Bridge%20→%20Panther%20Lake-blue?style=flat-square&logo=intel)](https://github.com/MangoKiwiPlumGrape/intel-me-disable)
 [![Device IDs](https://img.shields.io/badge/device%20IDs-61%20HECI%20IDs-brightgreen?style=flat-square)](https://github.com/MangoKiwiPlumGrape/intel-me-disable)
 [![Years](https://img.shields.io/badge/coverage-2011–2026-informational?style=flat-square)](https://github.com/MangoKiwiPlumGrape/intel-me-disable)
