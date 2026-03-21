@@ -10,7 +10,7 @@
 [![License](https://img.shields.io/badge/license-MIT-lightgrey?style=flat-square)](LICENSE)
 [![Hardware Tested](https://img.shields.io/badge/hardware-tested%20on%20ThinkPad-success?style=flat-square)](https://github.com/MangoKiwiPlumGrape/intel-me-disable)
 
-> Soft-disables the Intel Management Engine at the OS level on Debian/Ubuntu systems. For other OS see Universal_Distro.sh
+> Soft-disables the Intel Management Engine at the OS level on Debian/Ubuntu systems. For other OS see Universal_Distro.sh -
 > After running, ME will no longer appear in `lspci` and its kernel modules are permanently blocked.
 
 
